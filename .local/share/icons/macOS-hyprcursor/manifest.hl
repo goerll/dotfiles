@@ -1,0 +1,4 @@
+name = macOS-hyprcursor
+description = macOS cursors from github but hypr
+version = 0.1
+cursors_directory = hyprcursors
