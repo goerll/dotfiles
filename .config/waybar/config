@@ -3,11 +3,6 @@
     "modules-left": ["hyprland/workspaces"],
     "modules-center": ["clock"],
     "modules-right": ["backlight", "pulseaudio", "battery"],
-    "custom/arch": {
-      "format": "  ",
-      "tooltip": false,
-      "on-click": "sh $HOME/.config/rofi/bin/powermenu"
-    },
     "hyprland/workspaces": {
       "format": "{name}",
       "format": "{icon}",
