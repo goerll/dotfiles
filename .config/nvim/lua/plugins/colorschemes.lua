@@ -9,6 +9,7 @@ return {
     {"shrikecode/kyotonight.vim"},
     {"diegoulloao/neofusion.nvim"},
     {"Domeee/mosel.nvim"},
+    {'olivercederborg/poimandres.nvim'},
     { 'datsfilipe/vesper.nvim' },
 
     -- Warm Green-ish Themes

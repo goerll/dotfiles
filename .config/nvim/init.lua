@@ -1,4 +1,5 @@
 require("config.keymaps")
 require("config.general")
 require("config.lazy")
-vim.cmd("colorscheme catppuccin")
+vim.opt.fillchars:append({ eob = " " })
+vim.cmd("colorscheme poimandres")
