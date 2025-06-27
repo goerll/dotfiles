@@ -14,7 +14,7 @@ return {
 
     -- Warm Green-ish Themes
     {"xero/miasma.nvim"},
-    -- {"comfysage/evergarden"},
+    {"comfysage/evergarden"},
 
     -- Make background transparent (not an actual colorscheme)
     {"xiyaowong/transparent.nvim"},

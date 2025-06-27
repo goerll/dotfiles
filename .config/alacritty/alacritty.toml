@@ -2,7 +2,7 @@
 padding = { x = 20, y = 10}
 
 [font.normal]
-family = "Google Sans Mono" 
+family = "Liga SFMono Nerd Font" 
 style = "regular"
 
 # TokyoNight Alacritty Colors
