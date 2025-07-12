@@ -44,7 +44,7 @@
 
 #font-family = Google Sans Mono
 #theme = catppuccin-mocha
-theme = NvimDark
+theme = matrix 
 font-family = Liga SFMono Nerd Font
 window-padding-x = 4
 window-padding-y = 2
