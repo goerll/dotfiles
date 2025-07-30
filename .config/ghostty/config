@@ -42,10 +42,11 @@
 # # Just for example:
 # resize-overlay-duration = 4s 200ms
 
-#font-family = Google Sans Mono
-#theme = catppuccin-mocha
-theme = matrix 
-font-family = Liga SFMono Nerd Font
+theme = Twilight
+# theme = UltraDark
+# theme = catppuccin-mocha
+font-family = "Liga SFMono Nerd Font Bold"
+font-thicken = true
 window-padding-x = 4
 window-padding-y = 2
 window-padding-balance = true
