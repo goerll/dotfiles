@@ -42,9 +42,11 @@
 # # Just for example:
 # resize-overlay-duration = 4s 200ms
 
-theme = Twilight
+# theme = Twilight
 # theme = UltraDark
 # theme = catppuccin-mocha
+# theme = everforest-dark
+theme = evergarden-winter-green
 font-family = "Liga SFMono Nerd Font Bold"
 font-thicken = true
 window-padding-x = 4
