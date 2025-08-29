@@ -1,0 +1,4 @@
+txn:
+  type: interval
+  before: 
+  after: {"id":0,"start":"20250812T160139Z","tags":["bla]"]}

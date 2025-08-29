@@ -23,11 +23,11 @@ return {
       lspconfig.gopls.setup({})
       lspconfig.clangd.setup({})
       lspconfig.cssls.setup({})
-      lspconfig.html.setup({})
       lspconfig.jdtls.setup({})
       lspconfig.quick_lint_js.setup({})
-      lspconfig.pyright.setup({})
       lspconfig.rust_analyzer.setup({})
+      lspconfig.ruff.setup({})
+      lspconfig.tinymist.setup({})
     end
   },
 }
