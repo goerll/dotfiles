@@ -6,8 +6,10 @@ opacity = 0.85
 # family = "Liga SFMono Nerd Font"
 # family = "Google Sans Code NF"
 # family = "CommitMonoGoerll"
-family = "SFMono Nerd Font"
-style = "medium"
+# family = "SFMono Nerd Font"
+family = "PaperMono"
+# family = "Martian Mono"
+# style = "medium" ->
 
 # Ghostty-based Alacritty Colors
 [colors.primary]

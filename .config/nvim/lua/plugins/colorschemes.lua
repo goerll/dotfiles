@@ -14,6 +14,7 @@ return {
 
     -- Warm Green-ish Themes
     {"xero/miasma.nvim"},
+    {"bjarneo/pixel.nvim"},
     -- {"comfysage/evergarden"},
     {
     "comfysage/evergarden",

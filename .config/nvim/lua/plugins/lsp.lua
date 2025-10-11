@@ -22,7 +22,6 @@ return {
       lspconfig.lua_ls.setup({})
       lspconfig.gopls.setup({})
       lspconfig.clangd.setup({})
-      lspconfig.cssls.setup({})
       lspconfig.jdtls.setup({})
       lspconfig.quick_lint_js.setup({})
       lspconfig.rust_analyzer.setup({})
