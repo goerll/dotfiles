@@ -12,6 +12,7 @@
   ],
   "modules-right": [
     "group/tray-expander",
+    "custom/notification-toggle",
     "bluetooth",
     "network",
     "pulseaudio",
@@ -65,7 +66,7 @@
     "tooltip-format-disconnected": "Disconnected",
     "interval": 3,
     "nospacing": 1,
-    "on-click": "alacritty --class=Impala -e impala"
+    "on-click": "alacritty --class=Impala -e gazelle"
   },
   "battery": {
     "format": "{capacity}% {icon}",
@@ -131,5 +132,11 @@
     "interval": 5,
     "tooltip": false,
     "on-click": "~/.config/waybar/scripts/power-profile.sh toggle"
+  },
+  "custom/notification-toggle": {
+    "exec": "~/.config/waybar/scripts/notification-toggle.sh",
+    "interval": 5,
+    "tooltip": false,
+    "on-click": "~/.config/waybar/scripts/notification-toggle.sh toggle"
   }
 }

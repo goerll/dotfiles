@@ -7,7 +7,7 @@ vim.g.maplocalleader = ' '
 -- Clipboard configuration
 -- Yank into system clipboard
 map({'n', 'v', 'x'}, 'y', '"+y')
-map({'n', 'v', 'x'}, 'y', '"+Y')
+map({'n', 'v', 'x'}, 'Y', '"+Y')
 -- Delete into system clipboard (only when using x/X)
 map({'n', 'v', 'x'}, 'x', '"+d')
 map({'n', 'v', 'x'}, 'X', '"+D')
@@ -60,6 +60,9 @@ map("n", "<leader>|", "<C-W>v", { desc = "Split Window Right", remap = true })
 -- Indent lines in visual mode and keep the selection
 vim.api.nvim_set_keymap('v', '<', '<gv', { noremap = true, silent = true, desc = "Indent left and reselect" })
 vim.api.nvim_set_keymap('v', '>', '>gv', { noremap = true, silent = true, desc = "Indent right and reselect" })
+
+vim.api.nvim_set_keymap('i', 'jk', '<ESC>', { noremap = true, silent = true, desc = "Escape" })
+vim.api.nvim_set_keymap('i', 'kj', '<ESC>', { noremap = true, silent = true, desc = "Escape" })
 
 -- Indent lines in visual line mode and keep the selection
 vim.api.nvim_set_keymap('x', '<', '<gv', { noremap = true, silent = true, desc = "Indent left and reselect" })

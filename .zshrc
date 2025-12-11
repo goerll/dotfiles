@@ -3,6 +3,11 @@
 # confirmations, etc.) must go above this block; everything else may go below.
 #
 export SUDO_EDITOR="nvim"
+source ~/.zprofile
+
+if [ -z "$TMUX" ]; then
+  tmux new-session
+fi
 
 #
 if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
@@ -81,9 +86,25 @@ zstyle ':fzf-tab:complete:__zoxide_z:*' fzf-preview 'ls --color $realpath'
 
 # Aliases
 alias ls='ls --color'
-alias vim='nvim'
+# alias vim='nvim'
 alias c='clear'
+
+alias zc='ANTHROPIC_BASE_URL=${Z_AI_BASE_URL} ANTHROPIC_AUTH_TOKEN=${Z_AI_AUTH_TOKEN} ANTHROPIC_MODEL=${Z_AI_MODEL} claude'
+alias dc='clear & ANTHROPIC_BASE_URL=${DEEPSEEK_BASE_URL} ANTHROPIC_AUTH_TOKEN=${DEEPSEEK_AUTH_TOKEN} API_TIMEOUT_MS=${DEEPSEEK_API_TIMEOUT_MS} ANTHROPIC_MODEL=${DEEPSEEK_MODEL} ANTHROPIC_SMALL_FAST_MODEL=${DEEPSEEK_SMALL_FAST_MODEL} CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC=${DEEPSEEK_CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC} claude'
 
 # Shell integrations
 eval "$(fzf --zsh)"
 eval "$(zoxide init --cmd cd zsh)"
+
+
+
+## [Completion]
+## Completion scripts setup. Remove the following line to uninstall
+[[ -f /home/estevao/.config/.dart-cli-completion/zsh-config.zsh ]] && . /home/estevao/.config/.dart-cli-completion/zsh-config.zsh || true
+## [/Completion]
+
+export PATH="$HOME/.local/bin:$PATH"
+
+export NVM_DIR="$HOME/.config/nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
