@@ -40,8 +40,22 @@ map("n", "[b", "<cmd>bprevious<cr>", { desc = "Prev Buffer" })
 map("n", "]b", "<cmd>bnext<cr>", { desc = "Next Buffer" })
 map("n", "<leader>bb", "<cmd>e #<cr>", { desc = "Switch to Other Buffer" })
 map("n", "<leader>`", "<cmd>e #<cr>", { desc = "Switch to Other Buffer" })
-map("n", "<leader>bd", function() vim.cmd("bd") end, { desc = "Delete Buffer" })
-map("n", "<leader>bD", "<cmd>:bd<cr>", { desc = "Delete Buffer and Window" })
+map("n", "<leader>bd", function()
+  -- Don't delete last buffer
+  if #vim.fn.getbufinfo({ buflisted = 1 }) > 1 then
+    vim.cmd("bdelete")
+  else
+    vim.notify("Can't delete last buffer", vim.log.levels.WARN)
+  end
+end, { desc = "Delete Buffer" })
+map("n", "<leader>bD", function()
+  -- Delete buffer and window, but not the last buffer
+  if #vim.fn.getbufinfo({ buflisted = 1 }) > 1 then
+    vim.cmd("bdelete!")
+  else
+    vim.notify("Can't delete last buffer", vim.log.levels.WARN)
+  end
+end, { desc = "Force Delete Buffer" })
 
 -- Clear search with <esc>
 map({ "i", "n" }, "<esc>", "<cmd>noh<cr><esc>", { desc = "Escape and Clear hlsearch" })
@@ -58,12 +72,9 @@ map("n", "<leader>-", "<C-W>s", { desc = "Split Window Below", remap = true })
 map("n", "<leader>|", "<C-W>v", { desc = "Split Window Right", remap = true })
 
 -- Indent lines in visual mode and keep the selection
-vim.api.nvim_set_keymap('v', '<', '<gv', { noremap = true, silent = true, desc = "Indent left and reselect" })
-vim.api.nvim_set_keymap('v', '>', '>gv', { noremap = true, silent = true, desc = "Indent right and reselect" })
+map('v', '<', '<gv', { desc = "Indent left and reselect" })
+map('v', '>', '>gv', { desc = "Indent right and reselect" })
 
-vim.api.nvim_set_keymap('i', 'jk', '<ESC>', { noremap = true, silent = true, desc = "Escape" })
-vim.api.nvim_set_keymap('i', 'kj', '<ESC>', { noremap = true, silent = true, desc = "Escape" })
-
--- Indent lines in visual line mode and keep the selection
-vim.api.nvim_set_keymap('x', '<', '<gv', { noremap = true, silent = true, desc = "Indent left and reselect" })
-vim.api.nvim_set_keymap('x', '>', '>gv', { noremap = true, silent = true, desc = "Indent right and reselect" })
+-- Escape from insert mode
+map('i', 'jk', '<ESC>', { desc = "Escape" })
+map('i', 'kj', '<ESC>', { desc = "Escape" })

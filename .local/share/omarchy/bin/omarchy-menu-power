@@ -16,7 +16,7 @@ show_power_menu() {
   *Relaunch*) uwsm stop ;;
   *Restart*) systemctl reboot ;;
   *Shutdown*) systemctl poweroff ;;
-  *Logout*) hyprctl dispatch exit ;;
+  *Logout*) exit ;;
   esac
 }
 

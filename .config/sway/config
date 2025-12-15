@@ -1,0 +1,278 @@
+# Sway configuration based on your Hyprland setup
+# Dependencies: sway swaybg swaylock wofi waybar brightnessctl grim slurp wl-clipboard
+
+### Programs
+set $terminal kitty
+set $fileManager nautilus
+set $menu wofi --show drun
+
+### Mod keys
+set $mod Mod4
+set $altmod Mod1
+
+### Basic behavior
+seat * hide_cursor 5000
+seat * xcursor_theme Adwaita 22
+
+### Outputs / Monitors
+# NOTE: Use `swaymsg -t get_outputs` to confirm names like eDP-1, HDMI-A-1
+
+output "eDP-1" {
+    pos 0 350
+    scale 1.25
+    mode 1920x1080@59.999Hz
+    bg ~/.config/hypr/wallpaper.jpg fill
+}
+
+output "HDMI-A-1" {
+    pos 1536 0
+    scale 1.25
+    mode 2560x1440@144Hz
+    bg ~/.config/hypr/wallpaper.jpg fill
+}
+
+# Example mirrored config (commented)
+# output "HDMI-A-1" {
+#     mode 1920x1080@60Hz
+#     mirror "eDP-1"
+# }
+
+### Inputs
+
+# Keyboard layouts
+input type:keyboard {
+    xkb_layout br,us
+    xkb_options grp:alt_shift_toggle
+}
+
+# Touchpad
+input type:touchpad {
+    natural_scroll enabled
+    tap enabled
+}
+
+# Tablet
+input type:tablet_tool {
+    map_to_output "HDMI-A-1"
+}
+
+### Theme / environment
+
+# GTK/Qt theme
+# WARNING: `export` here only affects these commands, not apps launched later.
+# For global env, set this via /etc/sway/environment, systemd user, or your DM.
+exec_always {
+    gsettings set org.gnome.desktop.interface color-scheme "prefer-dark"
+    gsettings set org.gnome.desktop.interface gtk-theme "adw-gtk3"
+    QT_QPA_PLATFORMTHEME=qt6ct qt6ct >/dev/null 2>&1
+}
+
+### Autostart
+
+# Wallpaper + waybar
+exec_always {
+    # Wallpaper via swaybg (wbg is not part of Sway)
+    swaybg -i ~/.config/hypr/wallpaper.jpg -m fill
+    autotiling
+    # TODO: add redshift/hyprsunset equivalent here if you use one
+}
+
+### Gaps and borders
+gaps inner 4
+gaps outer 10
+default_border pixel 1
+default_floating_border normal
+
+### Colors (i3 / sway syntax)
+# class                border  backgr. text    indicator child_border
+client.focused          #d3c6aa #d3c6aa #2d353b #d3c6aa   #d3c6aa
+client.focused_inactive #45474a #45474a #d3c6aa #45474a   #45474a
+client.unfocused        #45474a #45474a #d3c6aa #45474a   #45474a
+client.urgent           #d3c6aa #d3c6aa #2d353b #d3c6aa   #d3c6aa
+client.placeholder      #45474a #454c4e #d3c6aa #45474a   #45474a
+
+### Window rules
+
+for_window [app_id="blueberry.py"] floating enable, resize set 800 600, move position center
+for_window [app_id="Impala"] floating enable, resize set 800 600, move position center
+for_window [app_id="Wiremix"] floating enable, resize set 800 600, move position center
+for_window [app_id="org.gnome.NautilusPreviewer"] floating enable, resize set 800 600, move position center
+for_window [app_id="Omarchy"] floating enable, resize set 800 600, move position center
+for_window [title="About"] floating enable, resize set 800 600, move position center
+
+# File pickers (xdg-desktop-portal-gtk)
+for_window [app_id="xdg-desktop-portal-gtk" title="^(Open.*Files?|Save.*Files?|All Files|Save)"] \
+    floating enable, move position center
+
+# Steam, RetroArch, etc
+for_window [class="steam"] floating enable
+for_window [class="steam" title="Steam"] floating enable, move position center
+for_window [title="OpenGL"] floating enable
+for_window [class="glfw"] floating enable
+for_window [class="com.libretro.RetroArch"] fullscreen enable
+
+# Screensaver
+for_window [class="Screensaver"] fullscreen enable
+
+# Force Chromium tiled
+for_window [class="Chromium"] floating disable
+
+### Workspace to output assignments
+
+workspace 1 output "HDMI-A-1"
+workspace 2 output "HDMI-A-1"
+workspace 3 output "HDMI-A-1"
+workspace 4 output "eDP-1"
+workspace 5 output "eDP-1"
+
+### Keybindings
+
+# Apps
+bindsym $mod+t exec $terminal
+bindsym $mod+q kill
+bindsym $mod+c exec neovide
+bindsym $mod+s exec env XDG_CURRENT_DESKTOP=gnome gnome-control-center
+bindsym $mod+w exec zen-browser
+bindsym $mod+e exec $fileManager
+bindsym $mod+Shift+v floating toggle
+bindsym $mod+r exec $menu
+bindsym $mod+space exec $menu
+bindsym $mod+f fullscreen
+bindsym $mod+Shift+Escape exec ~/.local/share/omarchy/bin/omarchy-menu-power
+
+# Screenshots
+bindsym $mod+p exec grim -g "$(slurp)" - | wl-copy
+bindsym Mod1+p exec grim -g "$(slurp)" - | wl-copy
+bindsym Print exec grim -g "$(slurp)" - | wl-copy
+
+# Lock screen
+bindsym Mod1+l exec swaylock -f -c 2d353b
+
+# Audio
+bindsym XF86AudioRaiseVolume exec wpctl set-volume -l 1.5 @DEFAULT_AUDIO_SINK@ 5%+
+bindsym XF86AudioLowerVolume exec wpctl set-volume -l 1.5 @DEFAULT_AUDIO_SINK@ 5%-
+bindsym XF86AudioMute exec wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle
+
+# Brightness
+bindsym XF86MonBrightnessUp exec brightnessctl set +5%
+bindsym XF86MonBrightnessDown exec brightnessctl set 5%-
+
+### Focus movement
+
+bindsym $mod+Left  focus left
+bindsym $mod+h     focus left
+bindsym $mod+Right focus right
+bindsym $mod+l     focus right
+bindsym $mod+Up    focus up
+bindsym $mod+k     focus up
+bindsym $mod+Down  focus down
+bindsym $mod+j     focus down
+
+### Move windows
+
+bindsym $mod+Shift+Left  move left
+bindsym $mod+Shift+h     move left
+bindsym $mod+Shift+Right move right
+bindsym $mod+Shift+l     move right
+bindsym $mod+Shift+Up    move up
+bindsym $mod+Shift+k     move up
+bindsym $mod+Shift+Down  move down
+bindsym $mod+Shift+j     move down
+
+### Workspaces
+
+# Switch workspace
+bindsym $mod+1 workspace number 1
+bindsym $mod+2 workspace number 2
+bindsym $mod+3 workspace number 3
+bindsym $mod+4 workspace number 4
+bindsym $mod+5 workspace number 5
+bindsym $mod+6 workspace number 6
+bindsym $mod+7 workspace number 7
+bindsym $mod+8 workspace number 8
+bindsym $mod+9 workspace number 9
+bindsym $mod+0 workspace number 10
+
+# Move container to workspace
+bindsym $mod+Shift+1 move container to workspace number 1
+bindsym $mod+Shift+2 move container to workspace number 2
+bindsym $mod+Shift+3 move container to workspace number 3
+bindsym $mod+Shift+4 move container to workspace number 4
+bindsym $mod+Shift+5 move container to workspace number 5
+bindsym $mod+Shift+6 move container to workspace number 6
+bindsym $mod+Shift+7 move container to workspace number 7
+bindsym $mod+Shift+8 move container to workspace number 8
+bindsym $mod+Shift+9 move container to workspace number 9
+bindsym $mod+Shift+0 move container to workspace number 10
+
+### Scratchpad
+
+bindsym $mod+g scratchpad show
+bindsym $mod+Shift+g move scratchpad
+
+### Layout
+
+bindsym $mod+b splith
+bindsym $mod+v splitv
+bindsym $mod+shift+s layout stacking
+# bindsym $mod+t layout tabbed
+bindsym $mod+Shift+space layout toggle split
+
+### Mouse
+
+floating_modifier $mod normal
+
+# Typical drag/resize:
+# drag with $mod + left mouse, resize with $mod + right mouse
+# (this is default behavior; explicit binds not needed)
+
+### Resize mode
+
+mode "resize" {
+    bindsym Left  resize shrink width 10px
+    bindsym h     resize shrink width 10px
+    bindsym Down  resize grow height 10px
+    bindsym j     resize grow height 10px
+    bindsym Up    resize shrink height 10px
+    bindsym k     resize shrink height 10px
+    bindsym Right resize grow width 10px
+    bindsym l     resize grow width 10px
+
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
+}
+bindsym $mod+Shift+r mode "resize"
+
+### Exit mode
+
+mode "exit" {
+    bindsym e exit
+    bindsym r restart
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
+}
+bindsym $mod+m mode "exit"
+
+### Status bar
+
+# If you want Waybar, disable the built-in bar completely:
+bar {
+    swaybar_command waybar
+}
+
+# If you want a minimal swaybar clock instead of Waybar:
+# bar {
+#     position top
+#     status_command while date +'%Y-%m-%d %H:%M:%S'; do sleep 1; done
+#     colors {
+#         statusline #d3c6aa
+#         background #2d353b
+#         focused_workspace #d3c6aa #d3c6aa #2d353b
+#         active_workspace #45474a #45474a #d3c6aa
+#         inactive_workspace #2d353b #2d353b #d3c6aa
+#         urgent_workspace #d3c6aa #d3c6aa #2d353b
+#     }
+# }
+
+# Load distro-provided snippets (systemd env, etc.)
+include /etc/sway/config.d/*

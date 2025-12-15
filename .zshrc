@@ -5,8 +5,12 @@
 export SUDO_EDITOR="nvim"
 source ~/.zprofile
 
+# Create unique session name based on terminal process ID
+SESSION_NAME="$$"
+
 if [ -z "$TMUX" ]; then
-  tmux new-session
+  # Start tmux with named session and attach
+  exec tmux new-session -s "$SESSION_NAME" \; set-option destroy-unattached on
 fi
 
 #

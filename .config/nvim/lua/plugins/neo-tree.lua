@@ -2,34 +2,12 @@ return {
     "nvim-neo-tree/neo-tree.nvim",
     branch = "v3.x",
     dependencies = {
-        "nvim-lua/plenary.nvim",
-        "nvim-tree/nvim-web-devicons",
-        "MunifTanjim/nui.nvim",
+      "nvim-lua/plenary.nvim",
+      "MunifTanjim/nui.nvim",
+      "nvim-tree/nvim-web-devicons", -- optional, but recommended
     },
+    lazy = false, -- neo-tree will lazily load itself
     keys = {
-        {
-            '<Space>e',
-            function()
-                require('neo-tree.command').execute({
-                    toggle = true,
-                    source = 'filesystem',
-                    position = 'left',
-                    dir = vim.fn.expand('%:p:h'), -- Current file directory
-                })
-            end,
-            desc = 'Filesystem (current file dir)',
-        },
-        {
-            '<Space>E',
-            function()
-                require('neo-tree.command').execute({
-                    toggle = true,
-                    source = 'filesystem',
-                    position = 'left',
-                    dir = vim.fn.expand('$HOME'),
-                })
-            end,
-            desc = 'Filesystem (root dir)',
-        },
+      { "<leader>e", "<cmd>Neotree toggle<cr>", desc = "Toggle NeoTree", silent = true },
     },
 }

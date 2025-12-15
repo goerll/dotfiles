@@ -1,50 +1,88 @@
 return {
-    {"catppuccin/nvim", name = "catpuccin", priority = 1000},
-    {"navarasu/onedark.nvim", style = "deep"},
-    {"shaunsingh/moonlight.nvim"},
-    {"nyoom-engineering/oxocarbon.nvim"},
-    {"marko-cerovac/material.nvim", style = "deep ocean"},
-    {"projekt0n/github-nvim-theme"},
-    {"folke/tokyonight.nvim", style = "night"},
-    {"shrikecode/kyotonight.vim"},
-    {"diegoulloao/neofusion.nvim"},
-    {"Domeee/mosel.nvim"},
-    {'olivercederborg/poimandres.nvim'},
-    { 'datsfilipe/vesper.nvim' },
-
-    -- Warm Green-ish Themes
-    {"xero/miasma.nvim"},
-    {"bjarneo/pixel.nvim"},
-    -- {"comfysage/evergarden"},
+    -- Main theme (highest priority)
     {
-    "comfysage/evergarden",
-    name = "evergarden",
-    priority = 1000,
-    opts = {
-        theme = {
-        variant = "winter", -- or "winter"|"spring"|"summer"
-        accent = "green",
+        "comfysage/evergarden",
+        name = "evergarden",
+        priority = 1000,
+        lazy = false,
+        opts = {
+            theme = {
+                variant = "winter", -- or "winter"|"spring"|"summer"
+                accent = "green",
+            },
+            editor = {
+                transparent_background = true,
+                override_terminal = true,
+                sign = { color = "none" },
+                float = { color = "mantle", invert_border = false },
+                completion = { color = "surface0" },
+            },
         },
-        editor = {
-        transparent_background = true,  -- <-- enable transparency
-        override_terminal = true,
-        sign = { color = "none" },
-        float = { color = "mantle", invert_border = false },
-        completion = { color = "surface0" },
+        config = function(_, opts)
+            require("evergarden").setup(opts)
+            vim.cmd("colorscheme evergarden")
+        end,
+    },
+
+    -- Alternative themes (can be switched to)
+    {
+        "catppuccin/nvim",
+        name = "catppuccin",
+        priority = 999,
+        lazy = true,
+        opts = {
+            flavour = "auto", -- latte, frappe, macchiato, mocha
+            background = {
+                light = "latte",
+                dark = "mocha",
+            },
+            transparent_background = true,
+            term_colors = true,
+            integrations = {
+                cmp = true,
+                gitsigns = true,
+                nvimtree = true,
+                telescope = true,
+                notify = true,
+                mini = true,
+            },
         },
     },
-    config = function(_, opts)
-        require("evergarden").setup(opts)
-        vim.cmd("colorscheme evergarden")
-    end,
+
+    {
+        "folke/tokyonight.nvim",
+        lazy = true,
+        priority = 998,
+        opts = {
+            style = "night",
+            transparent = true,
+            styles = {
+                sidebars = "transparent",
+                floats = "transparent",
+            },
+        },
     },
 
-    {"sainnhe/everforest"},
-    {'ribru17/bamboo.nvim'},
-    {'neanias/everforest-nvim'},
+    {
+        "navarasu/onedark.nvim",
+        lazy = true,
+        priority = 997,
+        opts = {
+            style = "deep",
+            transparent = true,
+            lualine = {
+                transparent = true,
+            },
+        },
+    },
 
-    {'sho-87/kanagawa-paper.nvim'},
-
-    -- Make background transparent (not an actual colorscheme)
-    {"xiyaowong/transparent.nvim"},
+    {
+        "neanias/everforest-nvim",
+        lazy = true,
+        priority = 996,
+        opts = {
+            background = "hard",
+            transparent_background_level = 1,
+        },
+    },
 }
