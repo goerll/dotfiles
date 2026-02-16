@@ -1,0 +1,69 @@
+#!/bin/bash
+
+detect_compositor() {
+  local desktop="${XDG_CURRENT_DESKTOP:-}"
+  desktop="${desktop,,}"
+
+  if [ -n "${HYPRLAND_INSTANCE_SIGNATURE:-}" ] || [[ "$desktop" == *hyprland* ]]; then
+    echo "hyprland"
+    return
+  fi
+
+  if [ -n "${NIRI_SOCKET:-}" ] || [[ "$desktop" == *niri* ]]; then
+    echo "niri"
+    return
+  fi
+
+  echo "unknown"
+}
+
+lock_screen() {
+  if command -v hyprlock >/dev/null 2>&1; then
+    hyprlock
+    return
+  fi
+
+  if command -v swaylock >/dev/null 2>&1; then
+    swaylock
+    return
+  fi
+
+  loginctl lock-session
+}
+
+logout_session() {
+  case "$(detect_compositor)" in
+    hyprland)
+      hyprctl dispatch exit
+      ;;
+    niri)
+      niri msg action quit
+      ;;
+    *)
+      # Last-resort fallback for unknown session/compositor setups.
+      uwsm stop
+      ;;
+  esac
+}
+
+show_power_menu() {
+  # The first characters are invisible sort keys.
+  local menu_options="\u200B Lock
+\u200C󰤄 Suspend
+\u200D Relaunch
+\u2060󰜉 Restart
+\u2063󰐥 Shutdown
+\u200B󰍃 Logout"
+  local selection=$(echo -e "$menu_options" | walker --dmenu --theme power-menu)
+
+  case "$selection" in
+  *Lock*) lock_screen ;;
+  *Suspend*) lock_screen && systemctl suspend ;;
+  *Relaunch*) uwsm stop ;;
+  *Restart*) systemctl reboot ;;
+  *Shutdown*) systemctl poweroff ;;
+  *Logout*) logout_session ;;
+  esac
+}
+
+show_power_menu

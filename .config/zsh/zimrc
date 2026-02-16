@@ -1,0 +1,7 @@
+# ~/.config/zsh/zimrc
+zstyle ':zim:module' use 'git'
+
+zmodule -z git-info
+zmodule -z completion  
+zmodule -z syntax-highlighting
+zmodule -z history-substring-search

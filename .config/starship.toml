@@ -1,3 +1,9 @@
+[cmd_duration]
+disabled = true
+
+[line_break]
+disabled = true
+
 [aws]
 symbol = "  "
 
@@ -188,3 +194,4 @@ symbol = " "
 
 [gradle]
 symbol = " "
+

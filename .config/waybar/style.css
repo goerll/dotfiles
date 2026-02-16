@@ -1,53 +1,77 @@
 @define-color foreground #d3c6aa;
-@define-color background #1C2428;
+@define-color background #1C2423;
+@define-color muted-foreground #484D47;
+@define-color workspace-active #d3c6aa;
+@define-color workspace-inactive rgba(211, 198, 170, 0.6);
+@define-color workspace-bg rgba(211, 198, 170, 0.2);
 
+/* Base Styles */
 window#waybar {
-    background-color: rgba(28, 36, 40, 0.9);
+    background-color: @background;
+    font-family: SF Pro Display, Black;
+    font-weight: 500;
+    font-size: 14px;
 }
 
-* {
-  background-color: rgba(0, 0, 0, 0);
-  color: @foreground;
-
-  border: none;
-  border-radius: 0;
-  min-height: 0;
-  font-family: Liga SFMono Nerd Font, bold;
-  font-size: 13px;
-}
-
+/* Layout Modules */
 .modules-left {
-  margin-left: 8px;
+    margin-left: 4px;
 }
 
 .modules-right {
-  margin-right: 8px;
+    margin-right: 4px;
 }
 
+/* Workspaces Module */
 #workspaces button {
-  all: initial;
-  padding: 0 6px;
-  margin: 0 1.5px;
-  min-width: 9px;
+    all: initial;
+    padding: 1px 6px;
+    margin: 4px;
+    min-width: 16px;
+    border-radius: 4px;
+    font-weight: 600;
+    font-family: SFMono Nerd Font, regular;
+    background-color: @muted-foreground;
+    color: @background;
 }
 
+#workspaces button.active {
+    background-color: @foreground;
+    color: @background;
+}
+
+/* System Tray Modules */
 #tray,
 #cpu,
 #battery,
 #network,
 #bluetooth,
 #pulseaudio,
-#clock,
-#custom-power-menu,
+#backlight,
+#clock.time,
+#custom-power-profile,
 #custom-notification-toggle {
-  min-width: 12px;
-  margin: 0 7.5px;
+    min-width: 20px;
+    margin: 0 3.5px;
+    color: @foreground;
 }
 
+#clock.date {
+    background-color: @foreground;
+    color: @background;
+    border-radius: 4px;
+    padding: 1px 8px;
+    margin: 4px 7.5px;
+    margin-left: 15px;
+}
+
+/* Custom Modules */
 #custom-expand-icon {
-  margin-right: 12px;
+    margin-right: 12px;
+    color: @foreground;
 }
 
+/* Tooltips */
 tooltip {
-  padding: 2px;
+    padding: 2px;
 }

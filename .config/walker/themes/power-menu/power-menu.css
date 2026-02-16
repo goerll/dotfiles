@@ -1,0 +1,12 @@
+@import url("file://~/.config/walker/themes/omarchy-default.css");
+
+/* Match Waybar's active palette */
+@define-color foreground #d3c6aa;
+@define-color background #1C2423;
+@define-color muted-foreground #484D47;
+
+/* Walker theme tokens consumed by omarchy-default.css */
+@define-color text @muted-foreground;
+@define-color selected-text @foreground;
+@define-color base @background;
+@define-color border @foreground;

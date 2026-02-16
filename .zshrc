@@ -1,114 +1,110 @@
-# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
-# Initialization code that may require console input (password prompts, [y/n]
-# confirmations, etc.) must go above this block; everything else may go below.
-#
-export SUDO_EDITOR="nvim"
+# =============================================================================
+# SECTION: Antidote Initialization
+# =============================================================================
+
+# Source antidote
+source /usr/share/zsh-antidote/antidote.zsh
+
+# Initialize antidote
+antidote init > /dev/null
+
+# Load bundled plugins from antidote
+antidote load ~/.zsh_plugins.txt
+
 source ~/.zprofile
 
-# Create unique session name based on terminal process ID
-SESSION_NAME="$$"
+# =============================================================================
+# SECTION: Starship
+# =============================================================================
 
-if [ -z "$TMUX" ]; then
-  # Start tmux with named session and attach
-  exec tmux new-session -s "$SESSION_NAME" \; set-option destroy-unattached on
-fi
+eval "$(starship init zsh)"
 
-#
-if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
-  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
-fi
+# =============================================================================
+# SECTION: Zoxide (Smart cd)
+# =============================================================================
 
-if [[ -f "/opt/homebrew/bin/brew" ]] then
-  # If you're using macOS, you'll want this enabled
-  eval "$(/opt/homebrew/bin/brew shellenv)"
-fi
+eval "$(zoxide init zsh)"
 
-# Set the directory we want to store zinit and plugins
-ZINIT_HOME="${XDG_DATA_HOME:-${HOME}/.local/share}/zinit/zinit.git"
+# =============================================================================
+# SECTION: FZF Configuration
+# =============================================================================
 
-# Download Zinit, if it's not there yet
-if [ ! -d "$ZINIT_HOME" ]; then
-   mkdir -p "$(dirname $ZINIT_HOME)"
-   git clone https://github.com/zdharma-continuum/zinit.git "$ZINIT_HOME"
-fi
+# Set FZF default height (use percentage for tmux compatibility)
+export FZF_TMUX_HEIGHT="40%"
 
-# Source/Load zinit
-source "${ZINIT_HOME}/zinit.zsh"
+# Set default options for fzf
+export FZF_DEFAULT_OPTS="--height $FZF_TMUX_HEIGHT"
 
-# Add in Powerlevel10k
-zinit ice depth=1; zinit light romkatv/powerlevel10k
+# Set default preview commands
+export FZF_PREVIEW_FILE_CMD="head -n 10"
+export FZF_PREVIEW_DIR_CMD="ls"
 
-# Add in zsh plugins
-zinit light zsh-users/zsh-syntax-highlighting
-zinit light zsh-users/zsh-completions
-zinit light zsh-users/zsh-autosuggestions
-zinit light Aloxaf/fzf-tab
+# =============================================================================
+# SECTION: Greeting Suppression
+# =============================================================================
 
-# Add in snippets
-zinit snippet OMZL::git.zsh
-zinit snippet OMZP::git
-zinit snippet OMZP::sudo
-zinit snippet OMZP::archlinux
-zinit snippet OMZP::aws
-zinit snippet OMZP::kubectl
-zinit snippet OMZP::kubectx
-zinit snippet OMZP::command-not-found
+WELCOME=0
 
-# Load completions
-autoload -Uz compinit && compinit
+# =============================================================================
+# SECTION: History
+# =============================================================================
 
-zinit cdreplay -q
-
-# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
-[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
-
-# Keybindings
-bindkey -e
-bindkey '^p' history-search-backward
-bindkey '^n' history-search-forward
-bindkey '^[w' kill-region
-
-# History
-HISTSIZE=5000
-HISTFILE=~/.zsh_history
-SAVEHIST=$HISTSIZE
-HISTDUP=erase
-setopt appendhistory
-setopt sharehistory
-setopt hist_ignore_space
-setopt hist_ignore_all_dups
-setopt hist_save_no_dups
+# Ensure history is persisted and shared across sessions.
+export HISTFILE="$HOME/.zsh_history"
+export HISTSIZE=10000
+export SAVEHIST=10000
+setopt append_history
+setopt inc_append_history
+setopt share_history
 setopt hist_ignore_dups
-setopt hist_find_no_dups
+setopt hist_ignore_space
 
-# Completion styling
-zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
-zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
-zstyle ':completion:*' menu no
-zstyle ':fzf-tab:complete:cd:*' fzf-preview 'ls --color $realpath'
-zstyle ':fzf-tab:complete:__zoxide_z:*' fzf-preview 'ls --color $realpath'
+# =============================================================================
+# SECTION: Auto-Tmux Spawning
+# =============================================================================
 
-# Aliases
-alias ls='ls --color'
-# alias vim='nvim'
-alias c='clear'
+if [[ -z "$TMUX" ]]; then
+    # Unique-ish name: user + hostname + time + pid
+    SESSION_NAME="$USER@(hostname)-$(date +%Y%m%d-%H%M%S)-$$"
 
-alias zc='ANTHROPIC_BASE_URL=${Z_AI_BASE_URL} ANTHROPIC_AUTH_TOKEN=${Z_AI_AUTH_TOKEN} ANTHROPIC_MODEL=${Z_AI_MODEL} claude'
-alias dc='clear & ANTHROPIC_BASE_URL=${DEEPSEEK_BASE_URL} ANTHROPIC_AUTH_TOKEN=${DEEPSEEK_AUTH_TOKEN} API_TIMEOUT_MS=${DEEPSEEK_API_TIMEOUT_MS} ANTHROPIC_MODEL=${DEEPSEEK_MODEL} ANTHROPIC_SMALL_FAST_MODEL=${DEEPSEEK_SMALL_FAST_MODEL} CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC=${DEEPSEEK_CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC} claude'
+    # Extremely unlikely, but avoid collision
+    while tmux has-session -t "$SESSION_NAME" 2>/dev/null; do
+        SESSION_NAME="$SESSION_NAME-x"
+    done
 
-# Shell integrations
-eval "$(fzf --zsh)"
-eval "$(zoxide init --cmd cd zsh)"
+    exec tmux new-session -s "$SESSION_NAME" \; set-option destroy-unattached on
+fi
 
+# =============================================================================
+# SECTION: Aliases
+# =============================================================================
 
+# Use Neovim as the default editor, including for sudoedit.
+export EDITOR="nvim"
+export VISUAL="$EDITOR"
+export SUDO_EDITOR="$EDITOR"
 
-## [Completion]
-## Completion scripts setup. Remove the following line to uninstall
-[[ -f /home/estevao/.config/.dart-cli-completion/zsh-config.zsh ]] && . /home/estevao/.config/.dart-cli-completion/zsh-config.zsh || true
-## [/Completion]
+# eza aliases with group directories, icons, headers, and git status
+alias ls='eza -l --group-directories-first --icons --git -a --no-permissions --no-user --no-time -h'
 
+alias zc='ANTHROPIC_BASE_URL="https://api.z.ai/api/anthropic" ANTHROPIC_AUTH_TOKEN=${GLM_API_KEY} ANTHROPIC_DEFAULT_OPUS_MODEL="GLM-4.7" ANTHROPIC_DEFAULT_SONNET_MODEL="GLM-4.7" ANTHROPIC_DEFAULT_HAIKU_MODEL="GLM-4.5-Air" claude'
+alias dc='ANTHROPIC_BASE_URL="https://api.deepseek.com/anthropic" ANTHROPIC_AUTH_TOKEN=${DEEPSEEK_API_KEY} API_TIMEOUT_MS=3000000 ANTHROPIC_MODEL="deepseek-chat" ANTHROPIC_SMALL_FAST_MODEL="deepseek-chat" CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC=1 claude'
+alias mc='ANTHROPIC_BASE_URL="https://api.minimax.io/anthropic" ANTHROPIC_AUTH_TOKEN=${MINIMAX_PLAN_KEY} API_TIMEOUT_MS=3000000 ANTHROPIC_MODEL="MiniMax-M2.1" ANTHROPIC_SMALL_FAST_MODEL="MiniMax-M2.1" CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC=1 claude'
+
+# cd shortcut (zoxide provides the 'z' function)
+# alias cd='z'
+
+# Replace cat with bat (no paging for interactive use)
+alias cat='bat --paging=never --theme=ansi'
+
+# Edit root-owned files safely while keeping your user Neovim config.
+alias snvim='sudoedit'
+
+# pnpm
+export PNPM_HOME="/home/estevao/.local/share/pnpm"
 export PATH="$HOME/.local/bin:$PATH"
-
-export NVM_DIR="$HOME/.config/nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+case ":$PATH:" in
+  *":$PNPM_HOME:"*) ;;
+  *) export PATH="$PNPM_HOME:$PATH" ;;
+esac
+# pnpm end

@@ -1,0 +1,4 @@
+[open]
+# Use nvim as the default editor for opening files
+handler = "nvim"
+args = ["--cmd", "set noswapfile"]

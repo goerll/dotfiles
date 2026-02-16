@@ -12,10 +12,20 @@ opt.smartindent = true
 opt.breakindent = true -- Wrap indent to match line start
 
 -- Line numbers
-opt.number = false
+opt.number = true
 opt.relativenumber = true
 opt.cursorline = true
 opt.cursorlineopt = "both" -- Highlight both line number and content
+
+-- Hybrid line numbers: relative by default, absolute on current line
+vim.api.nvim_create_autocmd({ "BufEnter", "FocusGained", "InsertLeave", "WinEnter" }, {
+  pattern = "*",
+  callback = function()
+    if vim.opt.relativenumber:get() then
+      vim.opt.number = true
+    end
+  end,
+})
 
 -- Search
 opt.ignorecase = true -- Case insensitive searching

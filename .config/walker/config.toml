@@ -1,10 +1,54 @@
 close_when_open = true
-# theme = "omarchy-default"
+theme = "everforest"
 theme_base = []
-# theme_location = ["~/.local/share/omarchy/default/walker/themes/"]
 hotreload_theme = true
 force_keyboard_focus = true
+selection_wrap = true
 timeout = 60
+
+[placeholders]
+"default" = { input = " Search...", list = "No Results" }
+
+[keybinds]
+quick_activate = []
+
+[columns]
+symbols = 1
+
+[providers]
+max_results = 256
+default = [
+  "desktopapplications",
+  "websearch",
+]
+
+[[providers.prefixes]]
+prefix = "/"
+provider = "providerlist"
+
+[[providers.prefixes]]
+prefix = "."
+provider = "files"
+
+[[providers.prefixes]]
+prefix = ":"
+provider = "symbols"
+
+[[providers.prefixes]]
+prefix = "="
+provider = "calc"
+
+[[providers.prefixes]]
+prefix = "@"
+provider = "websearch"
+
+[[providers.prefixes]]
+prefix = "$"
+provider = "clipboard"
+
+[[emergencies]]
+text = "Restart Walker"
+command = "killall walker; uwsm-app -- walker --gapplication-service &"
 
 [keys.ai]
 run_last_response = ["ctrl e"]

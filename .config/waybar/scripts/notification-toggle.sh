@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # Define icons for notification states
-NOTIFICATIONS_ENABLED_ICON="󰂚 "
-NOTIFICATIONS_DISABLED_ICON="󰂛 "
+NOTIFICATIONS_ENABLED_ICON="󰂚"
+NOTIFICATIONS_DISABLED_ICON="󰂛"
 
 # Check current notification state
 if makoctl mode | grep -q "do-not-disturb"; then

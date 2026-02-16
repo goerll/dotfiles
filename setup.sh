@@ -1,15 +1,29 @@
 #!/bin/bash
 
 # Setup script for dotfiles
-# Installs stow, stows dotfiles, and installs packages
+# Uses GNU Stow to manage symlinks
+# Can be run multiple times safely - only performs missing steps
+#
 
 set -euo pipefail
 
-# Colors for output
+cat << 'EOF'
+           __..--''``---....___   _..._    __
+ /// //_.-'    .-/";  `        ``<._  ``.''_ `. / // /
+///_.-' _..--.'_    \                    `( ) ) // //
+/ (_..-' // (< _     ;_..__               ; `' / ///
+ / // // //  `-._,_)' // / ``--...____..-' /// / //
+EOF
+
+# =============================================================================
+# SECTION: Configuration and Utilities
+# =============================================================================
+
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
-NC='\033[0m' # No Color
+BLUE='\033[0;34m'
+NC='\033[0m'
 
 error() {
     echo -e "${RED}[ERROR]${NC} $*" >&2
@@ -24,17 +38,22 @@ warn() {
     echo -e "${YELLOW}[WARN]${NC} $*"
 }
 
-# Check if running as root (we'll need sudo for package installation)
+skip() {
+    echo -e "${BLUE}[SKIP]${NC} $*"
+}
+
+# =============================================================================
+# SECTION: Prerequisites Check
+# =============================================================================
+
 if [[ $EUID -eq 0 ]]; then
     error "This script should not be run as root. It will use sudo when needed."
 fi
 
-# Check for sudo
 if ! command -v sudo >/dev/null 2>&1; then
     error "sudo is not installed. Please install sudo first."
 fi
 
-# Determine package manager
 if command -v yay >/dev/null 2>&1; then
     PKGMGR="yay"
 elif command -v pacman >/dev/null 2>&1; then
@@ -45,96 +64,123 @@ fi
 
 info "Using package manager: $PKGMGR"
 
-# Install stow if not installed
+# =============================================================================
+# SECTION: Enable Bluetooth
+# =============================================================================
+
+if systemctl list-unit-files bluetooth.service >/dev/null 2>&1; then
+    if systemctl is-active --quiet bluetooth 2>/dev/null; then
+        skip "Bluetooth service is already active."
+    else
+        info "Enabling bluetooth service..."
+        if sudo systemctl enable --now bluetooth; then
+            info "Bluetooth service enabled successfully."
+        else
+            warn "Failed to enable bluetooth service."
+        fi
+    fi
+else
+    skip "Bluetooth service not available on this system."
+fi
+
+# =============================================================================
+# SECTION: Install Stow
+# =============================================================================
+
 if ! command -v stow >/dev/null 2>&1; then
     info "Installing stow..."
     sudo pacman -S --needed --noconfirm stow || error "Failed to install stow"
 else
-    info "stow is already installed."
+    skip "stow is already installed."
 fi
 
-# Determine dotfiles directory (where this script resides)
-DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# =============================================================================
+# SECTION: Stow Dotfiles
+# =============================================================================
 
+DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 info "Dotfiles directory: $DOTFILES_DIR"
 
-# Change to dotfiles directory
 cd "$DOTFILES_DIR" || error "Failed to change to dotfiles directory"
 
-# Stow dotfiles (only hidden files/directories except .git)
+info "Checking for conflicting files..."
+
+# Try stow in simulation mode to detect conflicts
+if stow --no --verbose --target="$HOME" . 2>&1 | grep -q "existing target is"; then
+    warn "Found conflicting files. Removing them..."
+    
+    # Get list of conflicts and remove them
+    stow --no --verbose --target="$HOME" . 2>&1 | grep "existing target is" | sed 's/.*existing target is neither.* nor.*: //' | while read -r conflict; do
+        conflict_path="$HOME/$conflict"
+        if [[ -e "$conflict_path" ]]; then
+            info "Removing conflicting file: $conflict_path"
+            rm -rf "$conflict_path"
+        fi
+    done
+fi
+
 info "Stowing dotfiles..."
-for item in .[!.]*; do
-    # Skip .git and any other unwanted items
-    if [[ "$item" == ".git" ]] || [[ "$item" == ".gitignore" ]]; then
-        continue
-    fi
-    if [[ ! -e "$item" ]]; then
-        continue
-    fi
+stow --verbose --target="$HOME" . || error "Failed to stow dotfiles"
 
-    if [[ -d "$item" ]]; then
-        # For directories, use stow
-        info "Stowing directory: $item..."
-        # Capture stow output and exit status
-        stow_output=$(stow --verbose --target="$HOME" "$item" 2>&1)
-        stow_exit=$?
-        while IFS= read -r line; do
-            info "stow: $line"
-        done <<< "$stow_output"
-        if [[ $stow_exit -ne 0 ]]; then
-            warn "stow encountered an error for $item (exit code: $stow_exit)"
-        fi
-    elif [[ -f "$item" ]]; then
-        # For files, create symlink directly
-        info "Creating symlink for file: $item..."
-        target="$HOME/$item"
-        source_abs="$(pwd)/$item"
+info "Dotfiles stowed successfully!"
 
-        # Check if symlink already exists and points to the right place
-        if [[ -L "$target" ]]; then
-            current_target="$(readlink -f "$target")"
-            if [[ "$current_target" == "$source_abs" ]]; then
-                info "Symlink already exists and points to correct location: $target"
-                continue
-            else
-                warn "Removing existing symlink $target (points to $current_target)"
-                rm "$target"
-            fi
-        elif [[ -e "$target" ]]; then
-            # Backup regular file/directory
-            warn "Backing up existing $target to ${target}.bak"
-            mv "$target" "${target}.bak"
-        fi
+# =============================================================================
+# SECTION: Install Packages
+# =============================================================================
 
-        # Create symlink
-        if ln -s "$source_abs" "$target"; then
-            info "Created symlink: $target -> $source_abs"
-        else
-            error "Failed to create symlink for $item"
-        fi
-    fi
-done
-
-# Install packages from packages.packages
-PACKAGES_FILE="packages.packages"
+PACKAGES_FILE="packages.txt"
 if [[ ! -f "$PACKAGES_FILE" ]]; then
     error "Packages file $PACKAGES_FILE not found."
 fi
 
-# Read packages into array, ignoring empty lines and comments
-mapfile -t packages < <(grep -v '^#' "$PACKAGES_FILE" | grep -v '^$')
+mapfile -t packages < <(
+    grep -v '^#' "$PACKAGES_FILE" | 
+    grep -v '^$' | 
+    sed 's/#.*//' | 
+    sed 's/^[[:space:]]*//;s/[[:space:]]*$//'
+)
 
 if [[ ${#packages[@]} -eq 0 ]]; then
     warn "No packages found in $PACKAGES_FILE."
-    exit 0
+else
+    info "Installing ${#packages[@]} packages..."
+
+    for pkg in "${packages[@]}"; do
+        [[ -z "$pkg" ]] && continue
+        
+        if pacman -Qq "$pkg" >/dev/null 2>&1; then
+            skip "Package already installed: $pkg"
+        else
+            info "Installing $pkg..."
+            $PKGMGR -S --needed --noconfirm "$pkg" || warn "Failed to install $pkg"
+        fi
+    done
 fi
 
-info "Installing ${#packages[@]} packages..."
+# =============================================================================
+# SECTION: Change Default Shell to Zsh
+# =============================================================================
 
-# Install packages
-for pkg in "${packages[@]}"; do
-    info "Installing $pkg..."
-    $PKGMGR -S --needed --noconfirm "$pkg" || warn "Failed to install $pkg"
-done
+if ! command -v zsh >/dev/null 2>&1; then
+    warn "Zsh is not installed. Skipping shell change."
+else
+    CURRENT_SHELL="$(getent passwd "$USER" | cut -d: -f7)"
+    ZSH_PATH="$(command -v zsh)"
+
+    if [[ "$CURRENT_SHELL" == "$ZSH_PATH" ]]; then
+        skip "Default shell is already zsh."
+    else
+        info "Changing default shell to zsh..."
+        if chsh -s "$ZSH_PATH"; then
+            info "Default shell changed to zsh. Please log out and log back in for changes to take effect."
+        else
+            error "Failed to change default shell to zsh."
+        fi
+    fi
+fi
+
+# =============================================================================
+# SECTION: Completion
+# =============================================================================
 
 info "Setup completed successfully!"

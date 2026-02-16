@@ -1,0 +1,5 @@
+@define-color background-color {{apps.swayosd_bg}};
+@define-color border-color {{apps.swayosd_border}};
+@define-color label {{apps.swayosd_label}};
+@define-color image {{apps.swayosd_image}};
+@define-color progress {{apps.swayosd_label}};
