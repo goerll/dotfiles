@@ -90,6 +90,7 @@ alias ls='eza -l --group-directories-first --icons --git -a --no-permissions --n
 alias zc='ANTHROPIC_BASE_URL="https://api.z.ai/api/anthropic" ANTHROPIC_AUTH_TOKEN=${GLM_API_KEY} ANTHROPIC_DEFAULT_OPUS_MODEL="GLM-4.7" ANTHROPIC_DEFAULT_SONNET_MODEL="GLM-4.7" ANTHROPIC_DEFAULT_HAIKU_MODEL="GLM-4.5-Air" claude'
 alias dc='ANTHROPIC_BASE_URL="https://api.deepseek.com/anthropic" ANTHROPIC_AUTH_TOKEN=${DEEPSEEK_API_KEY} API_TIMEOUT_MS=3000000 ANTHROPIC_MODEL="deepseek-chat" ANTHROPIC_SMALL_FAST_MODEL="deepseek-chat" CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC=1 claude'
 alias mc='ANTHROPIC_BASE_URL="https://api.minimax.io/anthropic" ANTHROPIC_AUTH_TOKEN=${MINIMAX_PLAN_KEY} API_TIMEOUT_MS=3000000 ANTHROPIC_MODEL="MiniMax-M2.1" ANTHROPIC_SMALL_FAST_MODEL="MiniMax-M2.1" CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC=1 claude'
+alias c='codex --yolo'
 
 # cd shortcut (zoxide provides the 'z' function)
 # alias cd='z'

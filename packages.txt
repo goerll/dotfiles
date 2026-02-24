@@ -16,7 +16,7 @@ ghostty
 gnome-calculator
 gnome-control-center
 gthumb
-helium-browser
+helium-browser-bin
 hypridle
 hyprland
 hyprlock
@@ -40,9 +40,8 @@ swaylock
 swayosd
 systemd
 tmux
-vicinae
+vicinae-bin
 vlc
-walker
 waybar
 wiremix
 wireplumber
@@ -55,7 +54,14 @@ xdg-desktop-portal-gtk
 xdg-desktop-portal-hyprland
 yay
 yazi
-zen-browser
+zen-browser-bin
 zoxide
 zsh
 zsh-antidote
+vesktop-bin
+pnpm
+rofi
+opencode-bin
+obsidian
+fastfetch
+uv

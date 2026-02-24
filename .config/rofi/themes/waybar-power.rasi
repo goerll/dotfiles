@@ -1,0 +1,57 @@
+* {
+    fg:        #d3c6aa;
+    bg:        #1C2423;
+    muted:     #484D47;
+}
+
+window {
+    anchor:           center;
+    location:         center;
+    border:           0px;
+    background-color: transparent;
+    width:            220px;
+}
+
+mainbox {
+    background-color: @bg;
+    border:           2px;
+    border-color:     @fg;
+    border-radius:    8px;
+    padding:          8px;
+    spacing:          0px;
+}
+
+inputbar {
+    enabled: false;
+}
+
+listview {
+    layout:           vertical;
+    lines:            5;
+    columns:          1;
+    spacing:          4px;
+    cycle:            false;
+    scrollbar:        false;
+    background-color: transparent;
+}
+
+element {
+    border-radius:    5px;
+    background-color: transparent;
+    padding:          10px 16px;
+    spacing:          12px;
+}
+
+element selected {
+    background-color: @fg;
+}
+
+element-text {
+    font:             "SF Pro Display Medium 13";
+    text-color:       @fg;
+    background-color: transparent;
+}
+
+element-text selected {
+    text-color: @bg;
+}
